@@ -10,8 +10,8 @@ plugins {
 group = "me.sfxde"
 version = "1.0"
 
+
 repositories {
-    jcenter()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
@@ -21,7 +21,6 @@ dependencies {
     implementation("com.github.jnr:jnr-ffi:2.2.12")
 
 }
-
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
 }

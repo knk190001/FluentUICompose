@@ -5,5 +5,11 @@ pluginManagement {
     }
     
 }
-rootProject.name = "FluentUICompose"
+sourceControl {
+    gitRepository(java.net.URI("https://github.com/knk190001/GradleCodeGenerator.git")){
+        producesModule("com.github.knk190001.gradle-code-generator:plugin-kotlin")
+    }
+}
 
+rootProject.name = "FluentUICompose"
+include("Styles")
