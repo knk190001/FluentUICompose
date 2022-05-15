@@ -19,8 +19,17 @@ repositories {
 dependencies {
     implementation(compose.desktop.currentOs)
     implementation("com.github.jnr:jnr-ffi:2.2.12")
+    implementation(project(":Styles"))
 
 }
+
+allprojects {
+    dependencies {
+        module("org.json:json:20220320")
+
+    }
+}
+
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
 }

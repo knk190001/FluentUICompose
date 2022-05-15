@@ -9,8 +9,7 @@ interface DWM {
     fun DwmSetWindowAttribute(hwnd: Long, dwAttribute: DWMAttribute, pvAttribute: Pointer, cbAttribute: Int)
 }
 
-
-fun enableMica(window: ComposeWindow) {
+fun enableMica(window: ComposeWindow, darkMode:Boolean) {
     val dwm = LibraryLoader.create(DWM::class.java).load("dwmapi")
     val runtime = Runtime.getRuntime(dwm)
     val memoryManager = runtime.memoryManager
@@ -24,12 +23,14 @@ fun enableMica(window: ComposeWindow) {
 //        pvAttrPointer,
 //        runtime.addressSize()
 //    )
-    dwm.DwmSetWindowAttribute(
-        window.windowHandle,
-        DWMAttribute.DWMA_USE_IMMERSIVE_DARK_MODE,
-        pvAttrPointer,
-        runtime.addressSize()
-    )
+    if (darkMode) {
+        dwm.DwmSetWindowAttribute(
+            window.windowHandle,
+            DWMAttribute.DWMA_USE_IMMERSIVE_DARK_MODE,
+            pvAttrPointer,
+            runtime.addressSize()
+        )
+    }
     pvAttrPointer.putInt(0,2)
     dwm.DwmSetWindowAttribute(
         window.windowHandle,
