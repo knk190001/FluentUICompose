@@ -9,33 +9,40 @@ interface DWM {
     fun DwmSetWindowAttribute(hwnd: Long, dwAttribute: DWMAttribute, pvAttribute: Pointer, cbAttribute: Int)
 }
 
-fun enableMica(window: ComposeWindow, darkMode:Boolean) {
-    val dwm = LibraryLoader.create(DWM::class.java).load("dwmapi")
-    val runtime = Runtime.getRuntime(dwm)
-    val memoryManager = runtime.memoryManager
+val dwm = LibraryLoader.create(DWM::class.java).load("dwmapi")
+private val runtime = Runtime.getRuntime(dwm)
+private val memoryManager = runtime.memoryManager
+private val darkModeState = memoryManager.allocateDirect(runtime.addressSize())
+private val pvAttrPointer = memoryManager.allocateDirect(runtime.addressSize())
 
-    val pvAttrPointer = memoryManager.allocateDirect(runtime.addressSize())
-    pvAttrPointer.putInt(0, 1)
+fun enableMica(window: ComposeWindow, darkMode: Boolean) {
 
-//    dwm.DwmSetWindowAttribute(
-//        window.windowHandle,
-//        DWMAttribute.DWMA_MICA_EFFECT,
-//        pvAttrPointer,
-//        runtime.addressSize()
-//    )
+    darkModeState.putInt(0, 0)
     if (darkMode) {
+        darkModeState.putInt(0, 1)
         dwm.DwmSetWindowAttribute(
             window.windowHandle,
             DWMAttribute.DWMA_USE_IMMERSIVE_DARK_MODE,
-            pvAttrPointer,
+            darkModeState,
             runtime.addressSize()
         )
     }
-    pvAttrPointer.putInt(0,2)
+    pvAttrPointer.putInt(0, 2)
     dwm.DwmSetWindowAttribute(
         window.windowHandle,
         DWMAttribute.DWMWA_SYSTEMBACKDROP_TYPE,
         pvAttrPointer,
+        runtime.addressSize()
+    )
+}
+
+fun toggleDarkMode(window: ComposeWindow) {
+    val current = darkModeState.getInt(0)
+    darkModeState.putInt(0, if (current == 1) 0 else 1)
+    dwm.DwmSetWindowAttribute(
+        window.windowHandle,
+        DWMAttribute.DWMA_USE_IMMERSIVE_DARK_MODE,
+        darkModeState,
         runtime.addressSize()
     )
 }

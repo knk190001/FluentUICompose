@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.model.SourceSet.SourceSetType
 
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization") version "1.5.31"
     java
 }
 
@@ -19,14 +20,19 @@ repositories {
     }
 }
 
+val generatingSourceSet = sourceSets["mainGenerator"]!!
+val generatingConfig = configurations[generatingSourceSet.implementationConfigurationName]!!
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.compose.ui:ui:1.0.0")
+    implementation("org.json:json:20220320")
+    implementation(sourceSets["mainGenerator"].output)
+
+    generatingConfig("org.json:json:20220320")
+    generatingConfig("org.jetbrains.compose.ui:ui:1.0.0")
+    generatingConfig("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
+    generatingConfig("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
 }
-val generatingSourceSet = sourceSets["mainGenerator"]!!
-val generatingConfig = configurations[generatingSourceSet.implementationConfigurationName]!!
-dependencies.add(generatingConfig.name,"org.json:json:20220320")
-dependencies.add(generatingConfig.name,"org.jetbrains.compose.ui:ui:1.0.0")
 
 buildscript {
     repositories {

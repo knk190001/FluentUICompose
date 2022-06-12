@@ -11,8 +11,3 @@ fun enableTransparency(window: ComposeWindow) {
     skiaLayer.transparency = true
     composeLayer.add(skiaLayer,1)
 }
-
-@Suppress("FunctionName")
-fun ColorIIIF(r: Int, g: Int, b: Int, a: Float):Color {
-    return Color(r,g,b,(a*255).toInt())
-}
