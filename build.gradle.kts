@@ -20,13 +20,12 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation("com.github.jnr:jnr-ffi:2.2.12")
     implementation(project(":Styles"))
-
+    implementation(project(":UI"))
 }
 
 allprojects {
     dependencies {
         module("org.json:json:20220320")
-
     }
 }
 

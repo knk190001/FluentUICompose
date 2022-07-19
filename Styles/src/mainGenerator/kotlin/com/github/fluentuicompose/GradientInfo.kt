@@ -15,9 +15,7 @@ data class GradientInfo(
             val cb = CodeBlock.builder()
                 .add("%T.verticalGradient(\n", Brush::class)
             cb.indent()
-            stops.sortedBy {
-                it.position
-            }.forEach {
+            stops.forEach {
                 cb.add("${it.position}f to %T(0x${it.color}),\n", Color::class)
             }
             cb.unindent()

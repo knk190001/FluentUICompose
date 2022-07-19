@@ -36,9 +36,8 @@ fun enableMica(window: ComposeWindow, darkMode: Boolean) {
     )
 }
 
-fun toggleDarkMode(window: ComposeWindow) {
-    val current = darkModeState.getInt(0)
-    darkModeState.putInt(0, if (current == 1) 0 else 1)
+fun setDarkModeState(window: ComposeWindow, isDark: Boolean) {
+    darkModeState.putInt(0, if (isDark) 1 else 0 )
     dwm.DwmSetWindowAttribute(
         window.windowHandle,
         DWMAttribute.DWMA_USE_IMMERSIVE_DARK_MODE,
