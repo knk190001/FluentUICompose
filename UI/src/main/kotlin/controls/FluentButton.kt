@@ -25,7 +25,9 @@ fun FluentAccentButton(
     var state by remember {
         mutableStateOf(ButtonState.None)
     }
-    FluentAccentButtonStateless(modifier.setButtonState { state = it }, onClick, state, content)
+    SetLocalTextColor(state.getOnAccentTextColor()){
+        FluentAccentButtonStateless(modifier.setButtonState { state = it }, onClick, state, content)
+    }
 }
 
 @Composable
@@ -35,7 +37,9 @@ fun FluentButton(
     var state by remember {
         mutableStateOf(ButtonState.None)
     }
-    FluentButtonStateless(modifier.setButtonState { state = it }, onClick, state, content)
+    SetLocalTextColor(state.getTextColor()){
+        FluentButtonStateless(modifier.setButtonState { state = it }, onClick, state, content)
+    }
 }
 
 @Composable

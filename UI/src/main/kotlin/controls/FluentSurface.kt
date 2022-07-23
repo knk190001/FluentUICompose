@@ -65,35 +65,35 @@ fun ShadowedBox(
     contentAlignment: Alignment,
     content: @Composable BoxScope.() -> Unit = {}
 ) {
-    Box(
-        modifier
-            .shadow(elevation, RoundedCornerShape(radius))
-            .background(brush, RoundedCornerShape(radius))
-            .border(1.dp,strokeBrush, RoundedCornerShape(radius)),
-        contentAlignment,
-    ){
-        content()
-    }
-
 //    Box(
 //        modifier
 //            .shadow(elevation, RoundedCornerShape(radius))
-//            .drawBehind {
-//                this.density
-//                drawRoundRect(
-//                    brush,
-//                    cornerRadius = CornerRadius(radius.toPx(), radius.toPx()),
-//                    blendMode = BlendMode.Src
-//                )
-//                drawRoundRect(
-//                    strokeBrush,
-//                    cornerRadius = CornerRadius(radius.toPx(), radius.toPx()),
-//                    style = Stroke(1.dp.toPx()),
-//                    //blendMode = BlendMode.Src
-//                )
-//            },
-//        contentAlignment = contentAlignment
-//    ) {
+//            .background(brush, RoundedCornerShape(radius))
+//            .border(1.dp,strokeBrush, RoundedCornerShape(radius)),
+//        contentAlignment,
+//    ){
 //        content()
 //    }
+
+    Box(
+        modifier
+            .shadow(elevation, RoundedCornerShape(radius))
+            .drawBehind {
+                this.density
+                drawRoundRect(
+                    brush,
+                    cornerRadius = CornerRadius(radius.toPx(), radius.toPx()),
+                    blendMode = BlendMode.Src
+                )
+                drawRoundRect(
+                    strokeBrush,
+                    cornerRadius = CornerRadius(radius.toPx(), radius.toPx()),
+                    style = Stroke(1.dp.toPx()),
+                    //blendMode = BlendMode.Src
+                )
+            },
+        contentAlignment = contentAlignment
+    ) {
+        content()
+    }
 }

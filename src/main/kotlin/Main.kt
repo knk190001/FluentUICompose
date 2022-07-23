@@ -37,7 +37,7 @@ fun main() = application {
             windowGlobal = window
         }
         FluentTheme(if (darkMode) dark else light, if (darkMode) darkGradient else lightGradient) {
-            FluentSurface(Modifier.offset(50.dp, 50.dp), 4.dp, true) {
+            FluentSurface(Modifier.offset(50.dp, 50.dp), 4.dp, false) {
                 Column(Modifier.size(600.dp).padding(20.dp), Arrangement.Center, Alignment.CenterHorizontally) {
                     FluentText("Hello world", color = FluentTheme.colors.fillColor.text.primary, font = fonts.title)
                     FluentAccentButton  (
@@ -48,12 +48,21 @@ fun main() = application {
                             darkMode = !darkMode
                             setDarkModeState(windowGlobal, darkMode)
                         }
-                    ) { bs ->
-                        FluentText("Button", color = bs.getOnAccentTextColor(), font = fonts.body)
+                    ) {
+                        FluentText("Button", font = fonts.body)
                     }
+
+                    FluentButton(
+                        Modifier
+                            .padding(top = 20.dp)
+                            .size(100.dp,40.dp)
+                    ) {
+                        FluentText("Button", font = fonts.body)
+                    }
+
                     FluentToggleButton(Modifier
                         .padding(top = 20.dp)
-                        .size(200.dp,40.dp),
+                        .size(150.dp,40.dp),
                         onToggle = {},
                     ){
                         FluentText("ToggleButton", font = fonts.body)
@@ -61,7 +70,7 @@ fun main() = application {
 
                     FluentHyperlinkButton(Modifier
                         .padding(top = 20.dp)
-                        .size(200.dp,40.dp),
+                        .size(150.dp,40.dp),
                         onClick = {},
                     ){
                         FluentText("ToggleButton", font = fonts.body)
