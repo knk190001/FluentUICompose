@@ -1,14 +1,19 @@
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Surface
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.graphics.*
-
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import com.github.knk190001.fluentuicompose.generated.*
 import controls.*
 import interop.enableMica
@@ -16,21 +21,35 @@ import interop.setDarkModeState
 
 @Composable
 fun App() {
-    var text by remember { mutableStateOf("Hello, World!") }
+    Window(onCloseRequest = applicationScope::exitApplication) {
+        Canvas(Modifier.size(400.dp)) {
+            drawIntoCanvas {
 
-    Surface(Modifier.size(200.dp), color = Color.LightGray.copy(0.5f)) {
-
+            }
+        }
     }
 
-
 }
+
 lateinit var windowGlobal: ComposeWindow
-fun main() = application {
+lateinit var applicationScope: ApplicationScope
+fun main() {
+    application {
+        applicationScope = this
+        TestApp()
+//        App()
+    }
+}
+
+@Composable
+private fun TestApp() {
     var darkMode by remember {
         mutableStateOf(true)
     }
 
-    Window(onCloseRequest = ::exitApplication) {
+    val windowState = rememberWindowState(width = 1600.dp * .75f, height = 1200.dp * .75f)
+
+    Window(state = windowState, onCloseRequest = applicationScope::exitApplication) {
         LaunchedEffect(Unit) {
             enableTransparency(window)
             enableMica(window, darkMode)
@@ -40,10 +59,10 @@ fun main() = application {
             FluentSurface(Modifier.offset(50.dp, 50.dp), 4.dp, true) {
                 Column(Modifier.size(600.dp).padding(20.dp), Arrangement.Center, Alignment.CenterHorizontally) {
                     FluentText("Hello world", color = FluentTheme.colors.fillColor.text.primary, font = fonts.title)
-                    FluentAccentButton  (
+                    FluentAccentButton(
                         Modifier
                             .padding(top = 20.dp)
-                            .size(100.dp,40.dp),
+                            .size(100.dp, 40.dp),
                         onClick = {
                             darkMode = !darkMode
                             setDarkModeState(windowGlobal, darkMode)
@@ -51,20 +70,25 @@ fun main() = application {
                     ) { bs ->
                         FluentText("Button", color = bs.getOnAccentTextColor(), font = fonts.body)
                     }
-                    FluentToggleButton(Modifier
-                        .padding(top = 20.dp)
-                        .size(200.dp,40.dp),
-                        onToggle = {},
-                    ){
+                    FluentToggleButton(
+                        Modifier
+                            .padding(top = 20.dp)
+                            .size(200.dp, 40.dp),
+                        onToggle = {
+                            if(it){
+                            }
+                        },
+                    ) {
                         FluentText("ToggleButton", font = fonts.body)
                     }
 
-                    FluentHyperlinkButton(Modifier
-                        .padding(top = 20.dp)
-                        .size(200.dp,40.dp),
+                    FluentHyperlinkButton(
+                        Modifier
+                            .padding(top = 20.dp)
+                            .size(200.dp, 40.dp),
                         onClick = {},
-                    ){
-                        FluentText("ToggleButton", font = fonts.body)
+                    ) {
+                        FluentText("HyperLinkButton", font = fonts.body)
                     }
 
                     FluentHyperlink(
@@ -72,6 +96,14 @@ fun main() = application {
                         {},
                         "HyperlinkButton"
                     )
+
+                    FluentDropDown(
+                        Modifier
+                            .padding(top = 20.dp)
+                            .size(150.dp, 40.dp)
+                    ) {
+                        FluentText("Dropdown",font = fonts.body)
+                    }
                 }
 
             }

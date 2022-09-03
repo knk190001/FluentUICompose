@@ -17,5 +17,6 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(project(":Styles"))
     implementation("com.github.jnr:jnr-ffi:2.2.12")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
 }
 

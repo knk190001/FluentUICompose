@@ -3,19 +3,30 @@
 package controls
 
 import ShadowedBox
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.DropdownMenu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.Window
 import com.github.knk190001.fluentuicompose.generated.fonts
 
 @Composable
@@ -36,6 +47,28 @@ fun FluentButton(
         mutableStateOf(ButtonState.None)
     }
     FluentButtonStateless(modifier.setButtonState { state = it }, onClick, state, content)
+
+}
+
+@Composable
+fun FluentDropDown(
+    modifier: Modifier = Modifier, onClick: () -> Unit = {}, content: @Composable RowScope.(ButtonState) -> Unit
+) {
+    var state by remember {
+        mutableStateOf(ButtonState.None)
+    }
+
+    var open by remember {
+        mutableStateOf(false)
+    }
+
+
+    SetLocalTextColor(state.getTextColor()) {
+        FluentDropDownStateless(modifier.setButtonState { state = it }, {
+
+            onClick()
+        }, state,true, content)
+    }
 }
 
 @Composable
@@ -63,6 +96,7 @@ fun FluentToggleButton(
     }
 }
 
+
 @Composable
 fun FluentHyperlinkButton(
     modifier: Modifier = Modifier,
@@ -81,7 +115,7 @@ fun FluentHyperlink(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     content: String
-){
+) {
     var state by remember {
         mutableStateOf(ButtonState.None)
     }
@@ -96,7 +130,6 @@ fun FluentHyperlink(
         color = state.getAccentTextColor()
     )
 }
-
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -114,9 +147,10 @@ fun Modifier.setButtonState(setState: (ButtonState) -> Unit): Modifier {
     }.onPointerEvent(PointerEventType.Press) {
         setState(ButtonState.Pressed)
     }.onPointerEvent(PointerEventType.Release) {
-        setState(if(hovering)ButtonState.Hover else ButtonState.None)
+        setState(if (hovering) ButtonState.Hover else ButtonState.None)
     }
 }
+
 
 @Composable
 fun ButtonState.getAccentFill(): Color {
@@ -178,7 +212,6 @@ fun ButtonState.getTextColor(): Color {
     }
 }
 
-
 @Composable
 fun FluentHyperlinkButtonStateless(
     modifier: Modifier = Modifier,
@@ -192,6 +225,7 @@ fun FluentHyperlinkButtonStateless(
         FluentButtonGeneric(modifier, onClick, state, color, brush, false, content)
     }
 }
+
 
 @Composable
 fun FluentAccentButtonStateless(
@@ -220,6 +254,45 @@ fun FluentButtonStateless(
 }
 
 @Composable
+fun FluentDropDownStateless(
+    modifier: Modifier,
+    onClick: () -> Unit,
+    state: ButtonState,
+    open: Boolean,
+    content: @Composable (RowScope.(ButtonState) -> Unit)
+) {
+    val color = state.getFill()
+    val brush = FluentTheme.gradients.elevation.control.border
+
+    FluentButtonGeneric(
+        modifier,
+        onClick, state, color, brush, true
+    ) {
+        Row(
+            Modifier.fillMaxWidth().padding(end = 11.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(Modifier.padding(start = 11.dp, end = 8.dp).clipToBounds()) {
+                content(state)
+            }
+
+            Image(
+                painter = painterResource("assets/ic_fluent_chevron_down_24_regular.svg"),
+                null,
+                Modifier
+                    .size(12.dp, 22.dp),
+                contentScale = ContentScale.FillWidth,
+                colorFilter = ColorFilter.tint(state.getTextColor())
+            )
+        }
+    }
+    if(open){
+
+    }
+}
+
+@Composable
 private fun FluentButtonGeneric(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -229,21 +302,22 @@ private fun FluentButtonGeneric(
     shadowEnabled: Boolean = true,
     content: @Composable RowScope.(state: ButtonState) -> Unit
 ) {
-    AddColorToStack(primary) {
-        ShadowedBox(
-            modifier.clickable(
-                state != ButtonState.Disabled, onClick = onClick
-            ).padding(start = 12.dp, top = 5.dp, end = 12.dp, bottom = 7.dp),
-            SolidColor(LocalColorStack.current),
-            stroke,
-            4.dp,
-            if (shadowEnabled) 4.dp else 0.dp,
-            Alignment.Center
-        ) {
-            Row(Modifier.fillMaxSize(), Arrangement.Center, Alignment.CenterVertically) {
-                content(state)
-            }
+    val color by animateColorAsState(
+        primary,
+        tween(66)
+    )
+    ShadowedBox(
+        modifier.clickable(
+            state != ButtonState.Disabled, onClick = onClick
+        ).padding(start = 12.dp, top = 5.dp, end = 12.dp, bottom = 7.dp),
+        color,
+        stroke,
+        2.dp,
+        if (shadowEnabled) 4.dp else 0.dp,
+        Alignment.Center
+    ) {
+        Row(Modifier.fillMaxSize(), Arrangement.Center, Alignment.CenterVertically) {
+            content(state)
         }
     }
-
 }

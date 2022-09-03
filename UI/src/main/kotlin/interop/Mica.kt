@@ -36,6 +36,7 @@ fun enableMica(window: ComposeWindow, darkMode: Boolean) {
     )
 }
 
+
 fun setDarkModeState(window: ComposeWindow, isDark: Boolean) {
     darkModeState.putInt(0, if (isDark) 1 else 0 )
     dwm.DwmSetWindowAttribute(

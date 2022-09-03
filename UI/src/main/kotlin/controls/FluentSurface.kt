@@ -1,24 +1,28 @@
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.geometry.*
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import controls.FluentTheme
-import controls.StartColorStack
+import org.jetbrains.skia.PathFillMode
+import org.jetbrains.skia.Point3
+import org.jetbrains.skia.ShadowUtils
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberProperties
 
 @Composable
 fun FluentSurface(
@@ -28,29 +32,13 @@ fun FluentSurface(
     content: @Composable () -> Unit = {}
 ) {
     val backgroundColor =
-        if (solid) FluentTheme.colors.background.fillColor.solidBackground.base else FluentTheme.colors.background.fillColor.cardBackground.default
-    //val backgroundColor = Color(0xFF1c1c1c)
+        if (solid) FluentTheme.colors.background.fillColor.solidBackground.base
+        else FluentTheme.colors.background.fillColor.cardBackground.default
+
     val strokeColor = FluentTheme.colors.strokeColor.cardStroke.default
 
-    StartColorStack(backgroundColor) {
-        Box(modifier
-            .shadow(elevation, RoundedCornerShape(7.dp))
-            .drawBehind {
-                drawRoundRect(
-                    backgroundColor,
-                    cornerRadius = CornerRadius(7.dp.toPx(), 7.dp.toPx()),
-                    blendMode = BlendMode.Src
-                )
-                drawRoundRect(
-                    strokeColor,
-                    cornerRadius = CornerRadius(7.dp.toPx(), 7.dp.toPx()),
-                    style = Stroke(1.dp.toPx()),
-                    blendMode = BlendMode.Src
-                )
-            }
-        ) {
-            content()
-        }
+    ShadowedBox(modifier, backgroundColor, SolidColor(strokeColor), 7.dp, 2.dp, Alignment.TopStart) {
+        content()
     }
 
 }
@@ -58,7 +46,7 @@ fun FluentSurface(
 @Composable
 fun ShadowedBox(
     modifier: Modifier = Modifier,
-    brush: Brush,
+    color: Color,
     strokeBrush: Brush,
     radius: Dp,
     elevation: Dp = 0.dp,
@@ -67,33 +55,63 @@ fun ShadowedBox(
 ) {
     Box(
         modifier
-            .shadow(elevation, RoundedCornerShape(radius))
-            .background(brush, RoundedCornerShape(radius))
-            .border(1.dp,strokeBrush, RoundedCornerShape(radius)),
-        contentAlignment,
-    ){
+            .drawWithCache {
+                onDrawBehind {
+                    val size = size
+                    val path = Path().apply {
+                        addRoundRect(RoundRect(Rect(Offset.Companion.Zero, size), CornerRadius(radius.toPx())))
+                    }
+
+                    val zParams = Point3(0f, 0f, elevation.toPx())
+
+                    val lightPos = Point3(0f, -300.dp.toPx(), 600.dp.toPx())
+                    val lightRad = 800.dp.toPx()
+
+                    val alpha = 1f-.001f
+                    //val alpha = color.alpha
+                    val ambientAlpha = 0.039f * alpha
+                    val spotAlpha = 0.19f * alpha
+                    val ambientColor = Color.Black.copy(ambientAlpha)
+                    val spotColor = Color.Black.copy(spotAlpha)
+
+                    drawContext.canvas.withSaveLayer(size.toRect().inflate(10.dp.toPx()),Paint()){
+                        ShadowUtils.drawShadow(
+                            drawContext.canvas.nativeCanvas,
+                            path.asSkiaPath(),
+                            zParams,
+                            lightPos,
+                            lightRad,
+                            ambientColor.toArgb(),
+                            spotColor.toArgb(),
+                            transparentOccluder = true,
+                            geometricOnly = false
+                        )
+
+                        drawRoundRect(
+                            Color.Unspecified,
+                            cornerRadius = CornerRadius(radius.toPx()),
+                            blendMode = BlendMode.Clear
+                        )
+                        drawRoundRect(
+                            strokeBrush,
+                            cornerRadius = CornerRadius(radius.toPx()),
+                            blendMode = BlendMode.Src,
+                            style = Stroke(1.5.dp.toPx())
+                        )
+                        drawRoundRect(
+                            color,
+                            cornerRadius = CornerRadius(radius.toPx()),
+                            blendMode = BlendMode.DstAtop
+                        )
+                    }
+
+                }
+            },
+//            .padding(Dp.Hairline),
+            //.background(color, RoundedCornerShape(radius)),
+            //.border(1.dp, strokeBrush, RoundedCornerShape(radius)),
+        contentAlignment
+    ) {
         content()
     }
-
-//    Box(
-//        modifier
-//            .shadow(elevation, RoundedCornerShape(radius))
-//            .drawBehind {
-//                this.density
-//                drawRoundRect(
-//                    brush,
-//                    cornerRadius = CornerRadius(radius.toPx(), radius.toPx()),
-//                    blendMode = BlendMode.Src
-//                )
-//                drawRoundRect(
-//                    strokeBrush,
-//                    cornerRadius = CornerRadius(radius.toPx(), radius.toPx()),
-//                    style = Stroke(1.dp.toPx()),
-//                    //blendMode = BlendMode.Src
-//                )
-//            },
-//        contentAlignment = contentAlignment
-//    ) {
-//        content()
-//    }
 }
