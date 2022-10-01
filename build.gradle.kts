@@ -13,12 +13,14 @@ version = "1.0"
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 dependencies {
     implementation(compose.desktop.currentOs)
     implementation("com.github.jnr:jnr-ffi:2.2.12")
+    implementation("com.github.knk190001:EasyHookJava:1.0.3")
     implementation(project(":Styles"))
     implementation(project(":UI"))
 }

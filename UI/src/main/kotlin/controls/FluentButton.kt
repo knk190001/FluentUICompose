@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
@@ -23,10 +24,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPosition
 import com.github.knk190001.fluentuicompose.generated.fonts
 
 @Composable
@@ -52,7 +55,10 @@ fun FluentButton(
 
 @Composable
 fun FluentDropDown(
-    modifier: Modifier = Modifier, onClick: () -> Unit = {}, content: @Composable RowScope.(ButtonState) -> Unit
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    parentWindow: ComposeWindow,
+    content: @Composable RowScope.(ButtonState) -> Unit
 ) {
     var state by remember {
         mutableStateOf(ButtonState.None)
@@ -65,9 +71,12 @@ fun FluentDropDown(
 
     SetLocalTextColor(state.getTextColor()) {
         FluentDropDownStateless(modifier.setButtonState { state = it }, {
-
             onClick()
-        }, state,true, content)
+            open = !open
+        }, state, open, parentWindow, {
+                open = false
+            }, content
+        )
     }
 }
 
@@ -259,6 +268,8 @@ fun FluentDropDownStateless(
     onClick: () -> Unit,
     state: ButtonState,
     open: Boolean,
+    parentWindow: ComposeWindow,
+    close: () -> Unit,
     content: @Composable (RowScope.(ButtonState) -> Unit)
 ) {
     val color = state.getFill()
@@ -287,8 +298,8 @@ fun FluentDropDownStateless(
             )
         }
     }
-    if(open){
-
+    if (open) {
+        FluentDropdownMenu(DpSize(100.dp, 100.dp), WindowPosition.PlatformDefault, close, parentWindow) {}
     }
 }
 
