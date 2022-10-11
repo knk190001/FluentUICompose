@@ -1,55 +1,32 @@
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import com.github.knk190001.easyhook_java.LocalHook
 import com.github.knk190001.fluentuicompose.generated.*
 import controls.*
-import interop.User32
 import interop.enableMica
 import interop.enableTransparency
 import interop.setDarkModeState
-import jnr.ffi.annotations.Delegate
 import kotlinx.coroutines.delay
-import java.awt.Color
-import javax.swing.LookAndFeel
-import javax.swing.SwingUtilities
-import javax.swing.UIManager
-import javax.swing.plaf.metal.DefaultMetalTheme
 
-@Composable
-fun App() {
-    Window(onCloseRequest = applicationScope::exitApplication) {
-        Canvas(Modifier.size(400.dp)) {
-            drawIntoCanvas {
-
-            }
-        }
-    }
-
-}
 
 lateinit var windowGlobal: ComposeWindow
 val composeWindow = compositionLocalOf<ComposeWindow> { error("Window not initialized") }
 lateinit var applicationScope: ApplicationScope
 fun main() {
-//    CWH.createWindowHook()
-    CreateWindowHook.hookCreateWindow()
     application {
         applicationScope = this
-        TestApp()
+        ProvideWindowManager {
+            TestApp()
+        }
     }
 }
 var visible by mutableStateOf(false)

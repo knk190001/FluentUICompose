@@ -4,8 +4,8 @@ import jnr.ffi.LibraryLoader
 import jnr.ffi.Pointer
 import jnr.ffi.types.u_int32_t
 
-object U32{
-    val user32Impl:User32 = LibraryLoader.create(User32::class.java).load("user32")
+object User32{
+    val user32Impl:User32Impl = LibraryLoader.create(User32Impl::class.java).load("user32")
     fun CreateWindowExW(
         @u_int32_t dwExStyle: Long,
         lpClassName: Pointer?,
@@ -46,7 +46,7 @@ object U32{
     }
 }
 
-interface User32 {
+interface User32Impl {
     fun CreateWindowExW(
         @u_int32_t dwExStyle: Long,
         lpClassName: Pointer?,
@@ -72,4 +72,6 @@ interface User32 {
         hWndChild: Pointer?,
         hWndNewParent: Pointer?
     ): Pointer?
+
+
 }

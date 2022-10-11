@@ -1,3 +1,5 @@
+package interop
+
 import jnr.ffi.Pointer
 import jnr.ffi.annotations.Delegate
 import jnr.ffi.types.u_int32_t

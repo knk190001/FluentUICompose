@@ -20,7 +20,7 @@ repositories {
 dependencies {
     implementation(compose.desktop.currentOs)
     implementation("com.github.jnr:jnr-ffi:2.2.12")
-    implementation("com.github.knk190001:EasyHookJava:1.0.3")
+    implementation("com.github.knk190001:EasyHookJava:1.0.6")
     implementation(project(":Styles"))
     implementation(project(":UI"))
 }
