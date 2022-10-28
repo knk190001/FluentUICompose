@@ -15,7 +15,7 @@ fun FluentDropdownMenu(size: DpSize, position: WindowPosition, close: () -> Unit
         position = position,
         size = size
     )
-    Window(close, visible = true, state = windowState, undecorated = true, transparent = true,) {
+    EphemeralWindow(close, visible = true, state = windowState, undecorated = true, transparent = true,) {
         LaunchedEffect(Unit) {
             val rt = Runtime.getRuntime(User32.user32Impl)
             User32.SetParent(Pointer.wrap(rt, window.windowHandle), Pointer.wrap(rt, parentWindow.windowHandle))

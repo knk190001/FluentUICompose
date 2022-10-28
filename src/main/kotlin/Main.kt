@@ -12,9 +12,8 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.github.knk190001.fluentuicompose.generated.*
 import controls.*
-import interop.enableMica
-import interop.enableTransparency
-import interop.setDarkModeState
+import interop.*
+import jnr.ffi.Runtime
 import kotlinx.coroutines.delay
 
 
@@ -22,6 +21,7 @@ lateinit var windowGlobal: ComposeWindow
 val composeWindow = compositionLocalOf<ComposeWindow> { error("Window not initialized") }
 lateinit var applicationScope: ApplicationScope
 fun main() {
+    WindowClassManager.init()
     application {
         applicationScope = this
         ProvideWindowManager {
@@ -29,6 +29,7 @@ fun main() {
         }
     }
 }
+
 var visible by mutableStateOf(false)
 @Composable
 private fun TestApp() {
@@ -42,7 +43,7 @@ private fun TestApp() {
         delay(1)
         visible = true
     }
-    Window(state = windowState, visible = visible, onCloseRequest = applicationScope::exitApplication) {
+    MainWindow(state = windowState, visible = visible, onCloseRequest = applicationScope::exitApplication) {
         LaunchedEffect(Unit){
             enableTransparency(window)
             enableMica(window,true);

@@ -44,6 +44,10 @@ object User32{
     fun SetParent(hWndChild: Pointer?, hWndNewParent: Pointer?): Pointer? {
         return user32Impl.SetParent(hWndChild, hWndNewParent)
     }
+
+    fun RegisterClassExW(wndclassexw: Pointer?):Short{
+        return user32Impl.RegisterClassExW(wndclassexw)
+    }
 }
 
 interface User32Impl {
@@ -72,6 +76,10 @@ interface User32Impl {
         hWndChild: Pointer?,
         hWndNewParent: Pointer?
     ): Pointer?
+
+    fun RegisterClassExW(
+        wndclassexw: Pointer?
+    ): Short
 
 
 }
